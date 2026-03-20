@@ -1,0 +1,42 @@
+{
+  "name": "record-context",
+  "productName": "Scribe",
+  "version": "1.0.0",
+  "description": "Capture system audio during meetings, transcribe via Whisper, save as .md",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.scribe.app",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "entitlements": null,
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Scribe needs microphone access to record and transcribe audio.",
+        "NSScreenCaptureUsageDescription": "Scribe needs screen recording access to capture system audio."
+      }
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "lib/**/*",
+      "styles/**/*",
+      "node_modules/**/*"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^41.0.3",
+    "electron-builder": "^26.8.1"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "openai": "^6.32.0"
+  }
+}
