@@ -1,7 +1,7 @@
 {
   "name": "record-context",
   "productName": "Scribe",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Capture system audio during meetings, transcribe via Whisper, save as .md",
   "main": "main.js",
   "scripts": {
