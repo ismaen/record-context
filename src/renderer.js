@@ -92,7 +92,9 @@ async function startRecording() {
     await window.api.startRecording();
 
     audioCapture = new window.AudioCapture();
-    chunkManager = new window.ChunkManager(settings.chunkInterval, async (arrayBuffer) => {
+    await audioCapture.start();
+
+    chunkManager = new window.ChunkManager(audioCapture, async (arrayBuffer) => {
       try {
         await window.api.transcribeAudio(arrayBuffer);
         chunksTranscribed++;
@@ -102,9 +104,6 @@ async function startRecording() {
         setStatus('Transcription error - still recording');
       }
     });
-
-    audioCapture.onDataAvailable = (blob) => chunkManager.addBlob(blob);
-    await audioCapture.start();
     chunkManager.start();
 
     recordingStartTime = Date.now();
@@ -127,14 +126,14 @@ async function stopRecording() {
   setStatus('Stopping & transcribing...');
 
   try {
-    if (audioCapture) {
-      audioCapture.stop();
-      audioCapture = null;
-    }
-
     if (chunkManager) {
       await chunkManager.stop();
       chunkManager = null;
+    }
+
+    if (audioCapture) {
+      audioCapture.stop();
+      audioCapture = null;
     }
 
     const result = await window.api.stopRecording();

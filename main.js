@@ -118,12 +118,25 @@ function registerIpcHandlers() {
   ipcMain.handle('stop-recording', async () => {
     if (transcriptWriter) {
       const transcriptText = transcriptWriter.getFullTranscript();
-      const filePath = transcriptWriter.finalize();
+      let filePath = transcriptWriter.finalize();
 
       let slackSummary = null;
       if (transcriptText.trim()) {
+        const s = settings.getAll();
+
+        // Generate title and rename file
         try {
-          const s = settings.getAll();
+          mainWindow.webContents.send('insight-status', 'Generating title...');
+          const title = await insightGenerator.generateTitle(s.apiKey, transcriptText);
+          if (title) {
+            filePath = transcriptWriter.rename(title);
+          }
+        } catch (err) {
+          console.error('Title generation failed:', err);
+        }
+
+        // Generate insights
+        try {
           mainWindow.webContents.send('insight-status', 'Generating insights...');
           const insights = await insightGenerator.generate(s.apiKey, transcriptText);
           transcriptWriter.appendInsights(insights);

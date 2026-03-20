@@ -2,7 +2,8 @@ class AudioCapture {
   constructor() {
     this.stream = null;
     this.mediaRecorder = null;
-    this.onDataAvailable = null;
+    this._audioStream = null;
+    this._pendingBlobs = [];
   }
 
   async start() {
@@ -47,26 +48,61 @@ class AudioCapture {
     }
 
     this.audioContext = audioContext;
-    const audioStream = dest.stream;
+    this._audioStream = dest.stream;
+    this._pendingBlobs = [];
+    this._startRecorder();
+  }
 
-    this.mediaRecorder = new MediaRecorder(audioStream, {
+  _startRecorder() {
+    this.mediaRecorder = new MediaRecorder(this._audioStream, {
       mimeType: 'audio/webm;codecs=opus',
     });
-
     this.mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0 && this.onDataAvailable) {
-        this.onDataAvailable(event.data);
+      if (event.data.size > 0) {
+        this._pendingBlobs.push(event.data);
       }
     };
-
     // Fire ondataavailable every 10 seconds for finer-grained chunks
     this.mediaRecorder.start(10000);
   }
 
-  stop() {
-    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+  _stopRecorder() {
+    return new Promise((resolve) => {
+      this.mediaRecorder.addEventListener('stop', () => {
+        const blobs = this._pendingBlobs.splice(0);
+        resolve(blobs);
+      }, { once: true });
       this.mediaRecorder.stop();
+    });
+  }
+
+  async collectAndRestart() {
+    if (!this.mediaRecorder || this.mediaRecorder.state === 'inactive') return null;
+
+    const blobs = await this._stopRecorder();
+    if (blobs.length === 0) return null;
+
+    this._startRecorder();
+
+    const combined = new Blob(blobs, { type: 'audio/webm;codecs=opus' });
+    return combined.arrayBuffer();
+  }
+
+  async collectFinal() {
+    if (!this.mediaRecorder || this.mediaRecorder.state === 'inactive') {
+      const blobs = this._pendingBlobs.splice(0);
+      if (blobs.length === 0) return null;
+      const combined = new Blob(blobs, { type: 'audio/webm;codecs=opus' });
+      return combined.arrayBuffer();
     }
+
+    const blobs = await this._stopRecorder();
+    if (blobs.length === 0) return null;
+    const combined = new Blob(blobs, { type: 'audio/webm;codecs=opus' });
+    return combined.arrayBuffer();
+  }
+
+  stop() {
     if (this.stream) {
       this.stream.getTracks().forEach((t) => t.stop());
       this.stream = null;
