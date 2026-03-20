@@ -158,6 +158,8 @@ function registerIpcHandlers() {
     return true;
   });
 
+  ipcMain.handle('get-version', () => app.getVersion());
+
   ipcMain.handle('toggle-always-on-top', () => {
     const current = mainWindow.isAlwaysOnTop();
     mainWindow.setAlwaysOnTop(!current);

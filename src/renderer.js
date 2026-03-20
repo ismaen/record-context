@@ -30,6 +30,8 @@ let currentSlackSummary = null;
   apiKeyInput.value = settings.apiKey || '';
   outputDirText.textContent = settings.outputDir || 'Not set';
   chunkIntervalInput.value = settings.chunkInterval || 5;
+  const version = await window.api.getVersion();
+  document.getElementById('app-version').textContent = version;
 })();
 
 // Navigation

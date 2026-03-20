@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld('api', {
   stopRecording: () => ipcRenderer.invoke('stop-recording'),
   copyToClipboard: (text) => ipcRenderer.invoke('copy-to-clipboard', text),
   toggleAlwaysOnTop: () => ipcRenderer.invoke('toggle-always-on-top'),
+  getVersion: () => ipcRenderer.invoke('get-version'),
   onInsightStatus: (callback) => ipcRenderer.on('insight-status', (_event, msg) => callback(msg)),
 });

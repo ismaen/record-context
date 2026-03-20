@@ -225,6 +225,14 @@ body {
   text-transform: uppercase;
 }
 
+.version-label {
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  text-align: center;
+}
+
 /* Copy Slack button */
 .copy-slack-btn {
   margin-top: 18px;
