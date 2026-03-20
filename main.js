@@ -13,12 +13,15 @@ let transcriptWriter;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 400,
-    height: 300,
+    width: 440,
+    height: 520,
+    minWidth: 380,
+    minHeight: 420,
     resizable: true,
     alwaysOnTop: false,
     titleBarStyle: 'hiddenInset',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#0c0c14',
+    vibrancy: 'under-window',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

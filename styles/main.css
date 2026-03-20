@@ -1,3 +1,15 @@
+:root {
+  --bg: #0c0c14;
+  --surface: #16161f;
+  --surface-hover: #1e1e2a;
+  --border: rgba(255, 255, 255, 0.06);
+  --text-primary: #ebebf0;
+  --text-secondary: #6b6b80;
+  --accent: #7c5cfc;
+  --accent-hover: #6a48e0;
+  --accent-subtle: rgba(124, 92, 252, 0.2);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,156 +18,285 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #1a1a2e;
-  color: #e0e0e0;
+  background: var(--bg);
+  color: var(--text-primary);
   height: 100vh;
   overflow: hidden;
   user-select: none;
 }
 
+/* Titlebar */
 .titlebar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  padding: 0 16px;
   -webkit-app-region: drag;
-  background: #16213e;
-  height: 36px;
+  background: transparent;
+  height: 44px;
+  border-bottom: 1px solid var(--border);
 }
 
 .app-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: #8888aa;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .titlebar-controls {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   -webkit-app-region: no-drag;
 }
 
 .icon-btn {
   background: none;
   border: none;
-  color: #8888aa;
-  font-size: 16px;
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .icon-btn.active {
-  color: #e94560;
+  color: var(--accent);
 }
 
+/* Views */
 .view {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  height: calc(100vh - 36px);
+  padding: 24px;
+  height: calc(100vh - 44px);
+  position: relative;
 }
 
 .hidden {
   display: none !important;
 }
 
+/* Record Button */
 .record-btn {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  border: 4px solid #e94560;
-  background: transparent;
-  color: #e94560;
-  font-size: 18px;
-  font-weight: 700;
+  border: 2px solid var(--accent);
+  background: rgba(124, 92, 252, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--accent);
+  font-size: 0;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
 }
 
 .record-btn:hover {
-  background: rgba(233, 69, 96, 0.15);
+  transform: scale(1.04);
+  background: rgba(124, 92, 252, 0.12);
+  box-shadow: 0 0 30px rgba(124, 92, 252, 0.15);
 }
 
+.record-btn:active {
+  transform: scale(0.97);
+}
+
+.record-btn-inner {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.record-btn-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+/* Recording state */
 .record-btn.recording {
-  background: #e94560;
-  color: #fff;
-  animation: pulse 2s infinite;
+  border-color: var(--accent);
+  background: rgba(124, 92, 252, 0.1);
+  animation: record-pulse 2s ease-in-out infinite;
 }
 
+.record-btn.recording .record-btn-inner {
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  background: #ff4466;
+}
+
+.record-btn.recording .record-btn-label {
+  color: #ff4466;
+}
+
+@keyframes record-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 92, 252, 0.3); }
+  50% { box-shadow: 0 0 0 18px rgba(124, 92, 252, 0); }
+}
+
+/* Processing state */
 .record-btn.processing {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.4); }
-  50% { box-shadow: 0 0 0 15px rgba(233, 69, 96, 0); }
+.record-btn.processing .record-btn-inner {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status & Stats */
 .status {
-  margin-top: 16px;
+  margin-top: 20px;
   font-size: 13px;
-  color: #8888aa;
+  color: var(--text-secondary);
   text-align: center;
   max-width: 300px;
   word-break: break-word;
+  line-height: 1.4;
 }
 
 .stats {
   margin-top: 12px;
-  font-size: 14px;
-  color: #6a6a8a;
+  font-size: 13px;
+  color: var(--text-secondary);
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
 }
 
-.separator {
-  color: #3a3a5a;
+#duration {
+  font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  font-size: 13px;
 }
 
-/* Settings view */
+.separator {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  opacity: 0.5;
+}
+
+/* Watermark */
+.app-watermark {
+  position: absolute;
+  bottom: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  opacity: 0.2;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Copy Slack button */
+.copy-slack-btn {
+  margin-top: 18px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 8px 20px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.copy-slack-btn:hover {
+  background: var(--accent-subtle);
+  transform: translateY(-1px);
+}
+
+/* Settings View */
 #settings-view {
   align-items: stretch;
   justify-content: flex-start;
-  gap: 14px;
-  padding: 20px 24px;
+  gap: 0;
+  padding: 24px;
 }
 
 #settings-view h2 {
-  font-size: 16px;
-  color: #e0e0e0;
-  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.settings-group {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-group:first-of-type {
+  padding-top: 0;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-  color: #8888aa;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 input[type="password"],
 input[type="number"] {
-  background: #16213e;
-  border: 1px solid #2a2a4e;
-  border-radius: 6px;
-  padding: 8px 10px;
-  color: #e0e0e0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text-primary);
   font-size: 13px;
   outline: none;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-input:focus {
-  border-color: #e94560;
+input[type="password"]:focus,
+input[type="number"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
 }
 
 input[type="number"] {
@@ -171,55 +312,47 @@ input[type="number"] {
 .dir-path {
   flex: 1;
   font-size: 12px;
-  color: #6a6a8a;
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
 }
 
 .small-btn {
-  background: #16213e;
-  border: 1px solid #2a2a4e;
-  border-radius: 6px;
-  padding: 6px 14px;
-  color: #e0e0e0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 16px;
+  color: var(--text-primary);
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .small-btn:hover {
-  background: #1f2b4d;
+  background: var(--surface-hover);
 }
 
 .small-btn.primary {
-  background: #e94560;
-  border-color: #e94560;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
+  font-weight: 600;
 }
 
 .small-btn.primary:hover {
-  background: #d63a54;
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 92, 252, 0.3);
 }
 
 .settings-actions {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
-}
-
-.copy-slack-btn {
-  margin-top: 14px;
-  background: #16213e;
-  border: 1px solid #e94560;
-  border-radius: 6px;
-  padding: 8px 20px;
-  color: #e94560;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.copy-slack-btn:hover {
-  background: rgba(233, 69, 96, 0.15);
+  margin-top: 20px;
 }

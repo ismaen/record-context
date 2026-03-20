@@ -163,12 +163,13 @@ function setState(newState) {
   recordBtn.className = 'record-btn ' + newState;
   recordBtn.disabled = newState === 'processing';
 
+  const label = recordBtn.querySelector('.record-btn-label');
   if (newState === 'idle') {
-    recordBtn.textContent = 'Record';
+    label.textContent = 'Record';
   } else if (newState === 'recording') {
-    recordBtn.textContent = 'Stop';
+    label.textContent = 'Stop';
   } else {
-    recordBtn.textContent = '...';
+    label.textContent = '';
   }
 }
 
